@@ -492,6 +492,30 @@
       width: 100%;
     }
 
+    .calc-history-list {
+      display: grid;
+      gap: 8px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .calc-history-item {
+      background: var(--panel-strong);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      display: grid;
+      gap: 4px;
+      padding: 9px 10px;
+    }
+
+    .calc-history-item small {
+      color: var(--muted);
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      overflow-wrap: anywhere;
+    }
+
     .preset-row {
       display: flex;
       flex-wrap: wrap;
@@ -672,6 +696,7 @@
         </div>
         <div class="panel result-list">
           <div class="result-box"><small>Memory</small><span class="result-value" id="memoryDisplay">0</span><button class="copy-btn" data-copy="#memoryDisplay">Copy</button></div>
+          <div class="result-box"><small>Past calculations</small><div class="calc-history-list" id="calcHistoryList"><span class="result-value">No calculations yet.</span></div></div>
           <div class="result-box"><small>Keyboard</small><span class="result-value">Use digits, operators, Enter, Backspace, parentheses, and decimal point.</span></div>
         </div>
       </div>
@@ -786,6 +811,7 @@
         </div>
         <div class="panel result-list" id="taperResults"></div>
       </div>
+      <div class="panel pcd-diagram" id="taperDiagram" style="margin-top:18px"></div>
       <div class="divider">⚙</div>
     </section>
 
@@ -973,6 +999,7 @@
     let calcValue = "0";
     let memory = 0;
     let calcMode = "DEG";
+    let calcHistoryLog = [];
     const calcButtons = ["MC","MR","M+","M-","DEG","RAD","sin","cos","tan","asin","acos","atan","log","ln","√","x²","xⁿ","mod","π","e","(",")","±","⌫","7","8","9","/","C","CE","4","5","6","*","%","1/x","1","2","3","-",".","0","+","="];
     $("#keypad").innerHTML = calcButtons.map(k => `<button type="button" class="${["/","*","-","+","xⁿ","mod"].includes(k) ? "operator" : ""} ${k==="=" ? "equals" : ""}" data-key="${k}">${k}</button>`).join("");
 
@@ -999,6 +1026,9 @@
       $("#calcDisplay").textContent = calcValue || "0";
       $("#calcHistory").textContent = calcExpr;
       $("#memoryDisplay").textContent = n(memory, 8);
+      $("#calcHistoryList").innerHTML = calcHistoryLog.length
+        ? calcHistoryLog.map(item => `<div class="calc-history-item"><small>${item.expression}</small><span class="result-value">${item.result}</span></div>`).join("")
+        : `<span class="result-value">No calculations yet.</span>`;
     }
 
     function pressCalc(key) {
@@ -1024,7 +1054,12 @@
       else if (key === "DEG" || key === "RAD") setCalcMode(key);
       else if (key === "=") {
         const expression = calcExpr + calcValue;
-        try { calcValue = n(calcSafeEval(expression), 10); calcExpr = expression + " ="; }
+        try {
+          calcValue = n(calcSafeEval(expression), 10);
+          calcHistoryLog.unshift({ expression, result: calcValue });
+          calcHistoryLog = calcHistoryLog.slice(0, 12);
+          calcExpr = expression + " =";
+        }
         catch { calcValue = "Error"; calcExpr = expression; }
       }
       updateCalc();
@@ -1082,6 +1117,52 @@
       ].join(""));
     }
 
+    function renderTaperDiagram(large, small, length, angle, unit) {
+      const valid = large > 0 && small > 0 && length > 0 && large >= small;
+      if (!valid) {
+        $("#taperDiagram").innerHTML = `<svg viewBox="0 0 720 360"><rect width="720" height="360" fill="transparent"/><text x="32" y="52" fill="var(--danger)" font-family="IBM Plex Mono">Enter valid taper values to draw the live diagram.</text></svg>`;
+        return;
+      }
+
+      const leftX = 110;
+      const rightX = 610;
+      const centerY = 178;
+      const maxDia = Math.max(large, small);
+      const largeHalf = Math.max(18, (large / maxDia) * 95);
+      const smallHalf = Math.max(18, (small / maxDia) * 95);
+      const topLeft = centerY - largeHalf;
+      const bottomLeft = centerY + largeHalf;
+      const topRight = centerY - smallHalf;
+      const bottomRight = centerY + smallHalf;
+      const halfAngle = angle;
+      const includedAngle = angle * 2;
+
+      $("#taperDiagram").innerHTML = `
+        <svg viewBox="0 0 720 360" role="img" aria-label="Live taper calculator diagram">
+          <defs>
+            <pattern id="taper-live-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+              <path d="M24 0H0V24" fill="none" stroke="var(--hero-line)" stroke-width="1"/>
+            </pattern>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+              <path d="M0 0L8 4L0 8Z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+          <rect width="720" height="360" fill="url(#taper-live-grid)"/>
+          <path d="M${leftX} ${topLeft} L${rightX} ${topRight} L${rightX} ${bottomRight} L${leftX} ${bottomLeft} Z" fill="rgba(212,137,10,.10)" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M${leftX - 44} ${centerY} H${rightX + 44}" stroke="var(--metal)" stroke-width="1.5" stroke-dasharray="8 7"/>
+          <path d="M${leftX} ${topLeft - 28} V${bottomLeft + 28}M${rightX} ${topRight - 28} V${bottomRight + 28}" stroke="var(--rule)" stroke-width="1.5"/>
+          <path d="M${leftX} ${bottomLeft + 36} H${rightX}" stroke="var(--accent)" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <text x="${(leftX + rightX) / 2 - 70}" y="${bottomLeft + 62}" fill="var(--ink)" font-family="IBM Plex Mono">L = ${n(length)} ${unit}</text>
+          <path d="M${leftX - 34} ${topLeft} V${bottomLeft}" stroke="var(--accent)" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <text x="24" y="${centerY + 5}" fill="var(--ink)" font-family="IBM Plex Mono">Large Ø ${n(large)}</text>
+          <path d="M${rightX + 34} ${topRight} V${bottomRight}" stroke="var(--accent)" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+          <text x="${rightX - 8}" y="${centerY + 5}" fill="var(--ink)" font-family="IBM Plex Mono">Small Ø ${n(small)}</text>
+          <path d="M${leftX + 42} ${centerY} A72 72 0 0 0 ${leftX + 110} ${centerY - (largeHalf - smallHalf) * .38}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <text x="${leftX + 116}" y="${centerY - 22}" fill="var(--accent)" font-family="IBM Plex Mono">half ${n(halfAngle)}°</text>
+          <text x="32" y="42" fill="var(--accent)" font-family="IBM Plex Mono">Included angle ${n(includedAngle)}° | ΔØ ${n(large - small)} ${unit}</text>
+        </svg>`;
+    }
+
     function updateTaper(solve = false) {
       const unit = units.taperUnit;
       let large = parseFloat($("#taperLarge").value);
@@ -1101,7 +1182,10 @@
       }
       const ok = large > 0 && small > 0 && length > 0 && large >= small;
       $("#taperError").classList.toggle("show", !ok);
-      if (!ok) return;
+      if (!ok) {
+        renderTaperDiagram(large, small, length, 0, unit);
+        return;
+      }
       const diff = large - small;
       const angle = Math.atan((diff / 2) / length) / deg;
       const ratio = diff ? length / diff : Infinity;
@@ -1114,6 +1198,7 @@
         result("Taper per foot", `${n(tpf, 5)} ${unit}/ft`),
         result("Taper per inch", `${n(tpi * (unit === "inch" ? 1 : 25.4), 5)} ${unit}/in`)
       ].join(""));
+      renderTaperDiagram(large, small, length, angle, unit);
     }
 
     const threadData = [
