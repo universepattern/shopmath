@@ -1,5 +1,9 @@
 # ShopMath / MachinCalc
 
+**Live app:** https://universepattern.github.io/shopmath/
+
+## About
+
 A single-file Machine Shop Calculator Suite for daily shop-floor calculations.
 
 ## Tools
@@ -16,9 +20,3 @@ A single-file Machine Shop Calculator Suite for daily shop-floor calculations.
 ## Run locally
 
 Open `index.html` in a browser.
-
-## GitHub Pages
-
-This is a static app and can be hosted directly from the repository root using GitHub Pages.
-
-Live app: https://universepattern.github.io/shopmath/
