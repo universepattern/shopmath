@@ -676,7 +676,7 @@
         <div class="hero-copy">
           <span class="eyebrow">Tool 02</span>
           <h2>Scientific Calculator</h2>
-          <p>Keyboard-ready shop calculator with trig, inverse trig, logs, powers, constants, modulus, sign change, and memory.</p>
+          <p>Keyboard-ready shop calculator with trig, inverse trig, logs, powers, constants, modulus, and sign change.</p>
         </div>
         <div class="blueprint" data-hero="calc"></div>
       </div>
@@ -695,7 +695,6 @@
           <div class="keypad" id="keypad"></div>
         </div>
         <div class="panel result-list">
-          <div class="result-box"><small>Memory</small><span class="result-value" id="memoryDisplay">0</span><button class="copy-btn" data-copy="#memoryDisplay">Copy</button></div>
           <div class="result-box"><small>Past calculations</small><div class="calc-history-list" id="calcHistoryList"><span class="result-value">No calculations yet.</span></div></div>
           <div class="result-box"><small>Keyboard</small><span class="result-value">Use digits, operators, Enter, Backspace, parentheses, and decimal point.</span></div>
         </div>
@@ -997,10 +996,9 @@
 
     let calcExpr = "";
     let calcValue = "0";
-    let memory = 0;
     let calcMode = "DEG";
     let calcHistoryLog = [];
-    const calcButtons = ["MC","MR","M+","M-","DEG","RAD","sin","cos","tan","asin","acos","atan","log","ln","√","x²","xⁿ","mod","π","e","(",")","±","⌫","7","8","9","/","C","CE","4","5","6","*","%","1/x","1","2","3","-",".","0","+","="];
+    const calcButtons = ["sin","cos","tan","asin","acos","atan","log","ln","√","x²","xⁿ","mod","π","e","(",")","±","⌫","7","8","9","/","C","CE","4","5","6","*","%","1/x","1","2","3","-",".","0","+","="];
     $("#keypad").innerHTML = calcButtons.map(k => `<button type="button" class="${["/","*","-","+","xⁿ","mod"].includes(k) ? "operator" : ""} ${k==="=" ? "equals" : ""}" data-key="${k}">${k}</button>`).join("");
 
     function calcSafeEval(expr) {
@@ -1025,7 +1023,6 @@
     function updateCalc() {
       $("#calcDisplay").textContent = calcValue || "0";
       $("#calcHistory").textContent = calcExpr;
-      $("#memoryDisplay").textContent = n(memory, 8);
       $("#calcHistoryList").innerHTML = calcHistoryLog.length
         ? calcHistoryLog.map(item => `<div class="calc-history-item"><small>${item.expression}</small><span class="result-value">${item.result}</span></div>`).join("")
         : `<span class="result-value">No calculations yet.</span>`;
@@ -1047,10 +1044,6 @@
       else if (key === "C") { calcExpr = ""; calcValue = "0"; }
       else if (key === "CE") calcValue = "0";
       else if (key === "(" || key === ")") calcExpr += key;
-      else if (key === "M+") memory += Number(calcValue || 0);
-      else if (key === "M-") memory -= Number(calcValue || 0);
-      else if (key === "MR") calcValue = String(memory);
-      else if (key === "MC") memory = 0;
       else if (key === "DEG" || key === "RAD") setCalcMode(key);
       else if (key === "=") {
         const expression = calcExpr + calcValue;
@@ -1359,7 +1352,7 @@
 
     const learnData = [
       ["Degree ↔ DMS Converter", "Converts decimal angles into shop-readable DMS and back. Use it for compound slide settings, indexing, inspection reports, and layout angles. Example: 32.5° becomes 32° 30' 0\". Tip: use trig values when calculating offsets from an angle."],
-      ["Scientific Calculator", "Use this for quick bench math, trig, logs, powers, and constants. Enter values with buttons or keyboard, choose DEG for shop angle work and RAD for engineering formulas. Example: sin(30) in DEG gives 0.5. Tip: store a repeated value with M+."],
+      ["Scientific Calculator", "Use this for quick bench math, trig, logs, powers, and constants. Enter values with buttons or keyboard, choose DEG for shop angle work and RAD for engineering formulas. Example: sin(30) in DEG gives 0.5. Tip: use parentheses for complex formulas."],
       ["PCD Hole Position Calculator", "Creates X/Y coordinates around a pitch circle. Use it for flanges, bolt circles, rotary tables, and CNC spot-drill positions. Example: 6 holes on 120 mm PCD start at X60 Y0, then step every 60°. Tip: change start angle to rotate the pattern."],
       ["Drill Point Depth Calculator", "Calculates extra depth made by the drill point. Use it when a blind hole needs full diameter depth. Example: 10 mm drill at 135° has about 2.07 mm point depth. Tip: add this to the required full-diameter hole depth."],
       ["Taper Calculator", "Solves taper ratio, included angle, half angle, taper per foot, and taper per inch. Use it for lathe taper setups and inspection. Example: 50 to 40 mm over 100 mm is 1:10 taper. Tip: half angle is the compound slide angle."],
