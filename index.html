@@ -796,18 +796,18 @@
             <label>Length
               <input id="taperLength" type="number" step="any" value="100">
             </label>
-            <label>Taper per foot
-              <input id="taperTpf" type="number" step="any" placeholder="optional">
+            <label>Angle
+              <input id="taperAngle" type="number" step="any" placeholder="optional">
             </label>
-            <label>Known diameter
-              <select id="taperKnown">
-                <option value="large">Large diameter known</option>
-                <option value="small">Small diameter known</option>
+            <label>Angle type
+              <select id="taperAngleType">
+                <option value="included">Whole / Included</option>
+                <option value="side">One side / Center</option>
               </select>
             </label>
             <button class="action-btn primary" id="solveTaper" type="button">Solve missing</button>
           </div>
-          <p class="error-text" id="taperError">⚠ Enter a valid length and diameters, or taper per foot plus one diameter.</p>
+          <p class="error-text" id="taperError">⚠ Enter a valid length and diameters, or an angle plus length and one diameter.</p>
         </div>
         <div class="panel result-list" id="taperResults"></div>
       </div>
@@ -1167,19 +1167,36 @@
       const unit = units.taperUnit;
       let large = parseFloat($("#taperLarge").value);
       let small = parseFloat($("#taperSmall").value);
-      const length = parseFloat($("#taperLength").value);
-      const tpfInput = parseFloat($("#taperTpf").value);
-      if (solve && length > 0 && tpfInput > 0) {
-        const taperPerLength = unit === "inch" ? tpfInput / 12 : tpfInput / 304.8;
-        const diff = taperPerLength * length;
-        if ($("#taperKnown").value === "large" && Number.isFinite(large)) {
-          small = large - diff;
-          $("#taperSmall").value = n(small, 5);
-        } else if (Number.isFinite(small)) {
-          large = small + diff;
-          $("#taperLarge").value = n(large, 5);
+      let length = parseFloat($("#taperLength").value);
+      let angleVal = parseFloat($("#taperAngle").value);
+      let isHalf = $("#taperAngleType").value === "side";
+
+      if (solve) {
+        if (Number.isFinite(angleVal)) {
+          let halfAngle = isHalf ? angleVal : angleVal / 2;
+          if (Number.isFinite(large) && Number.isFinite(small) && !Number.isFinite(length)) {
+            let diff = large - small;
+            if (halfAngle > 0) {
+              length = (diff / 2) / Math.tan(halfAngle * deg);
+              $("#taperLength").value = n(length, 5);
+            }
+          } else if (Number.isFinite(length)) {
+            let diff = Math.tan(halfAngle * deg) * length * 2;
+            if (Number.isFinite(large) && !Number.isFinite(small)) {
+              small = large - diff;
+              $("#taperSmall").value = n(small, 5);
+            } else if (Number.isFinite(small) && !Number.isFinite(large)) {
+              large = small + diff;
+              $("#taperLarge").value = n(large, 5);
+            }
+          }
+        } else if (Number.isFinite(large) && Number.isFinite(small) && Number.isFinite(length)) {
+           let diff = large - small;
+           let calculatedAngle = Math.atan((diff / 2) / length) / deg;
+           $("#taperAngle").value = n(isHalf ? calculatedAngle : calculatedAngle * 2, 5);
         }
       }
+
       const ok = large > 0 && small > 0 && length > 0 && large >= small;
       $("#taperError").classList.toggle("show", !ok);
       if (!ok) {
@@ -1314,7 +1331,7 @@
 
     ["#pcdDia","#pcdHoles","#pcdStart"].forEach(id => $(id).addEventListener("input", updatePcd));
     ["#drillDia","#drillAngle","#customDrillAngle"].forEach(id => $(id).addEventListener("input", updateDrill));
-    ["#taperLarge","#taperSmall","#taperLength","#taperTpf","#taperKnown"].forEach(id => $(id).addEventListener("input", () => updateTaper(false)));
+    ["#taperLarge","#taperSmall","#taperLength","#taperAngle","#taperAngleType"].forEach(id => $(id).addEventListener("input", () => updateTaper(false)));
     $("#solveTaper").addEventListener("click", () => updateTaper(true));
     ["#threadStandard","#threadMaterial"].forEach(id => $(id).addEventListener("change", id === "#threadStandard" ? updateThreadSizes : updateThread));
     $("#threadSize").addEventListener("change", updateThread);
