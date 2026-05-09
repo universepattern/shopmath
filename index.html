@@ -610,12 +610,12 @@
     <a class="logo" href="#top">⚙ MachinCalc</a>
     <div class="nav-pills">
       <a href="#degree">◴ Degree</a>
-      <a href="#scientific">∑ Scientific</a>
       <a href="#pcd">◎ PCD</a>
       <a href="#drill">⌵ Drill</a>
       <a href="#taper">◿ Taper</a>
       <a href="#thread">▤ Threads</a>
       <a href="#speed">⟳ RPM</a>
+      <a href="#scientific">∑ Scientific</a>
       <a href="#learn">▥ Learn</a>
       <a href="#about">ⓘ About</a>
     </div>
@@ -671,41 +671,10 @@
       <div class="divider">⚙</div>
     </section>
 
-    <section class="section" id="scientific">
-      <div class="hero">
-        <div class="hero-copy">
-          <span class="eyebrow">Tool 02</span>
-          <h2>Scientific Calculator</h2>
-          <p>Keyboard-ready shop calculator with trig, inverse trig, logs, powers, constants, modulus, and sign change.</p>
-        </div>
-        <div class="blueprint" data-hero="calc"></div>
-      </div>
-      <div class="grid">
-        <div class="calc-shell">
-          <div class="display">
-            <div class="history" id="calcHistory"></div>
-            <div class="current" id="calcDisplay">0</div>
-          </div>
-          <div class="preset-row">
-            <div class="mode-toggle" id="angleMode">
-              <button class="active" type="button" data-mode="DEG">DEG</button>
-              <button type="button" data-mode="RAD">RAD</button>
-            </div>
-          </div>
-          <div class="keypad" id="keypad"></div>
-        </div>
-        <div class="panel result-list">
-          <div class="result-box"><small>Past calculations</small><div class="calc-history-list" id="calcHistoryList"><span class="result-value">No calculations yet.</span></div></div>
-          <div class="result-box"><small>Keyboard</small><span class="result-value">Use digits, operators, Enter, Backspace, parentheses, and decimal point.</span></div>
-        </div>
-      </div>
-      <div class="divider">⚙</div>
-    </section>
-
     <section class="section" id="pcd">
       <div class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Tool 03</span>
+          <span class="eyebrow">Tool 02</span>
           <h2>PCD Hole Position Calculator</h2>
           <p>Generate coordinate tables and a live diagram for bolt circles, indexing plates, flanges, and rotary table layouts.</p>
         </div>
@@ -741,7 +710,7 @@
     <section class="section" id="drill">
       <div class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Tool 04</span>
+          <span class="eyebrow">Tool 03</span>
           <h2>Drill Point Depth Calculator</h2>
           <p>Calculate extra point depth from drill diameter and included tip angle, with results in both metric and inch.</p>
         </div>
@@ -776,7 +745,7 @@
     <section class="section" id="taper">
       <div class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Tool 05</span>
+          <span class="eyebrow">Tool 04</span>
           <h2>Taper Calculator</h2>
           <p>Solve taper from diameters and length, or work from taper-per-foot with one diameter and length.</p>
         </div>
@@ -817,7 +786,7 @@
     <section class="section" id="thread">
       <div class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Tool 06</span>
+          <span class="eyebrow">Tool 05</span>
           <h2>Thread Tap Drill Size Calculator</h2>
           <p>Pick metric, UNC, or UNF threads and get tap drill, closest drill, minor diameter, and thread depth.</p>
         </div>
@@ -856,7 +825,7 @@
     <section class="section" id="speed">
       <div class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Tool 07</span>
+          <span class="eyebrow">Tool 06</span>
           <h2>Surface Speed / RPM Calculator</h2>
           <p>Convert spindle RPM to surface speed or calculate RPM from SFM and diameter. Presets cover HSS and carbide starting points.</p>
         </div>
@@ -880,6 +849,37 @@
           <div class="preset-row" id="speedPresets"></div>
         </div>
         <div class="panel result-list" id="speedResults"></div>
+      </div>
+      <div class="divider">⚙</div>
+    </section>
+
+    <section class="section" id="scientific">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">Tool 07</span>
+          <h2>Scientific Calculator</h2>
+          <p>Keyboard-ready shop calculator with trig, inverse trig, logs, powers, constants, modulus, and sign change.</p>
+        </div>
+        <div class="blueprint" data-hero="calc"></div>
+      </div>
+      <div class="grid">
+        <div class="calc-shell">
+          <div class="display">
+            <div class="history" id="calcHistory"></div>
+            <div class="current" id="calcDisplay">0</div>
+          </div>
+          <div class="preset-row">
+            <div class="mode-toggle" id="angleMode">
+              <button class="active" type="button" data-mode="DEG">DEG</button>
+              <button type="button" data-mode="RAD">RAD</button>
+            </div>
+          </div>
+          <div class="keypad" id="keypad"></div>
+        </div>
+        <div class="panel result-list">
+          <div class="result-box"><small>Past calculations</small><div class="calc-history-list" id="calcHistoryList"><span class="result-value">No calculations yet.</span></div></div>
+          <div class="result-box"><small>Keyboard</small><span class="result-value">Use digits, operators, Enter, Backspace, parentheses, and decimal point.</span></div>
+        </div>
       </div>
       <div class="divider">⚙</div>
     </section>
@@ -1352,12 +1352,12 @@
 
     const learnData = [
       ["Degree ↔ DMS Converter", "Converts decimal angles into shop-readable DMS and back. Use it for compound slide settings, indexing, inspection reports, and layout angles. Example: 32.5° becomes 32° 30' 0\". Tip: use trig values when calculating offsets from an angle."],
-      ["Scientific Calculator", "Use this for quick bench math, trig, logs, powers, and constants. Enter values with buttons or keyboard, choose DEG for shop angle work and RAD for engineering formulas. Example: sin(30) in DEG gives 0.5. Tip: use parentheses for complex formulas."],
       ["PCD Hole Position Calculator", "Creates X/Y coordinates around a pitch circle. Use it for flanges, bolt circles, rotary tables, and CNC spot-drill positions. Example: 6 holes on 120 mm PCD start at X60 Y0, then step every 60°. Tip: change start angle to rotate the pattern."],
       ["Drill Point Depth Calculator", "Calculates extra depth made by the drill point. Use it when a blind hole needs full diameter depth. Example: 10 mm drill at 135° has about 2.07 mm point depth. Tip: add this to the required full-diameter hole depth."],
       ["Taper Calculator", "Solves taper ratio, included angle, half angle, taper per foot, and taper per inch. Use it for lathe taper setups and inspection. Example: 50 to 40 mm over 100 mm is 1:10 taper. Tip: half angle is the compound slide angle."],
       ["Thread Tap Drill Size Calculator", "Select a thread and engagement to find tap drill size. Use lower engagement in tough materials or deep holes. Example: M6 x 1 at 75% recommends about 5.0 mm. Tip: closest standard drill helps when exact drills are unavailable."],
-      ["Surface Speed / RPM Calculator", "Converts RPM and diameter into cutting speed, or recommended cutting speed into RPM. Use presets as starting points for tool material and work material. Example: 1 inch at 1200 RPM is about 314 SFM. Tip: reduce for interrupted cuts or poor rigidity."]
+      ["Surface Speed / RPM Calculator", "Converts RPM and diameter into cutting speed, or recommended cutting speed into RPM. Use presets as starting points for tool material and work material. Example: 1 inch at 1200 RPM is about 314 SFM. Tip: reduce for interrupted cuts or poor rigidity."],
+      ["Scientific Calculator", "Use this for quick bench math, trig, logs, powers, and constants. Enter values with buttons or keyboard, choose DEG for shop angle work and RAD for engineering formulas. Example: sin(30) in DEG gives 0.5. Tip: use parentheses for complex formulas."]
     ];
     $("#learnAccordions").innerHTML = learnData.map(([title, text]) => `<details><summary>${title}</summary><p>${text}</p><div class="learn-grid"><div class="learn-chip"><strong>When to use:</strong><br>${text.split(".")[1] || "Daily shop setup."}</div><div class="learn-chip"><strong>Pro tip:</strong><br>${text.split("Tip:")[1] || "Verify critical values before machining."}</div></div></details>`).join("");
 
